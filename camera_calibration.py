@@ -2,9 +2,10 @@ import cv2
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-from IPython import embed
 
+# **************************************************************************************
+# https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html
+# **************************************************************************************
 
 nx = 9  # number of inside corners in x
 ny = 6  # number of inside corners in y
@@ -39,9 +40,9 @@ def run_calibration(folder_path, visualize):
         if not ret:
             continue
 
-        if visualize:
-            img_corners = img.copy()
-            img_corners = cv2.drawChessboardCorners(img_corners, (nx, ny), corners, ret)
+        # if visualize:
+        #     img_corners = img.copy()
+        #     img_corners = cv2.drawChessboardCorners(img_corners, (nx, ny), corners, ret)
 
         imgpoints.append(corners)
         objpoints.append(objpoints_single)
@@ -54,20 +55,20 @@ def run_calibration(folder_path, visualize):
         print "Caliubration failed"
         return
 
-    print("camera martix: {}".format(camera_matrix))
-    print("distortion_coeffs: {}".format(distortion_coeffs))
-
     if visualize:
+        img = cv2.imread(os.path.join(folder_path, 'calibration1.jpg'))
+
         undistorted_img = cv2.undistort(img, camera_matrix, distortion_coeffs)
 
         f, (ax1, ax2) = plt.subplots(1, 2, figsize=(24, 9))
         f.tight_layout()
-        ax1.imshow(img_corners)
+        ax1.imshow(img)
         ax1.set_title('Original Image', fontsize=50)
         ax2.imshow(undistorted_img, cmap="gray")
         ax2.set_title('Undistorted Image', fontsize=50)
         plt.subplots_adjust(left=0., right=1, top=0.9, bottom=0.)
         plt.show()
+        f.savefig('./output_images/calibration.png', dpi=200)
 
     return camera_matrix, distortion_coeffs
 
